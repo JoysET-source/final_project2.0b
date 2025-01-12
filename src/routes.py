@@ -24,6 +24,53 @@ def scrivi_ricetta(ricetta: RicettaCreate, db: Session = Depends(get_db)):
     return db_ricetta
 
 
+@router.get("/cerca ricetta", response_model=RicetteSchema)
+def trova_ricetta(nome_ricetta: str, db: Session = Depends(get_db)):
+    db_ricetta = db.query(Ricette).filter(Ricette.nome_ricetta == nome_ricetta).first()
+    if db_ricetta is None:
+        raise HTTPException(status_code=404, detail="Ricetta non trovata")
+    return db_ricetta
+
+
+@router.get("/{nome_ricetta}", response_model=RicetteSchema)
+def apporto_calorie(kcal: int, db: Session = Depends(get_db)):
+    db_ricetta = db.query(Ricette).filter(Ricette.kcal == kcal).all()
+    if not db_ricetta :
+        raise HTTPException(status_code=404, detail="Non ci sono ricette con le kcal specificate")
+    return db_ricetta
+
+
+@router.put("/{nome_ricetta}", response_model=RicetteSchema)
+def modifica_ricetta(nome_ricetta: str, ricetta: RicettaCreate, db: Session = Depends(get_db)):
+    db_ricetta = db.query(Ricette).filter(Ricette.nome_ricetta == nome_ricetta).first()
+    if db_ricetta is None:
+        raise HTTPException(status_code=404, detail="Ricetta non trovata")
+
+    for key, value in ricetta.dict().items():
+        setattr(db_ricetta, key, value)
+
+    db.commit()
+    db.refresh(db_ricetta)
+    return db_ricetta
+
+@router.delete("/{nome_ricetta}")
+def cancella_ricetta(nome_ricetta: str, db: Session = Depends(get_db)):
+    db_ricetta = db.query(Ricette).filter(Ricette.nome_ricetta == nome_ricetta).first()
+    if db_ricetta is None:
+        raise HTTPException(status_code=404, detail="Ricetta non esiste")
+
+    db.delete(db_ricetta)
+    db.commit()
+    return {"message": "Ricetta cancellata"}
+
+
+
+
+
+
+
+
+
 
 
 
