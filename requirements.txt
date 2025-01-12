@@ -1,0 +1,27 @@
+# Activating venv
+# python -m venv KROenv
+# KROenv\Scripts\activate
+
+# Installing requirements
+# pip install -r requirements.txt
+
+# Starting FastApi app
+# uvicorn src.main:app --reload
+
+# comandi utili
+
+# for force kill process
+# Get-Process python* | Select-Object Id,ProcessName
+# Get-Process python* | Stop-Process -Force
+
+python-dotenv==1.0.0
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.0
+SQLAlchemy==2.0.36
+email-validator==2.1.1
+pydantic-settings==2.2.1
+requests==2.30.0
+
+
+
