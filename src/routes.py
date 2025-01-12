@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
 
 from src.database import get_db
 from src.schemas import RicettaCreate, Ricetta as RicetteSchema
