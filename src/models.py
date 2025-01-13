@@ -7,7 +7,7 @@ class Ricette(Base):
 
     nome_ricetta = Column(String, primary_key=True, unique=True, index=True)
     ingredienti = Column(String, nullable=True, index=True)
-    kcal = Column(Integer, unique=True, index=True)
+    kcal = Column(Integer, index=True)
 
 
 
