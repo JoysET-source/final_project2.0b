@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from src.database import Base
 
@@ -8,6 +8,25 @@ class Ricette(Base):
     nome_ricetta = Column(String, primary_key=True, unique=True, index=True)
     ingredienti = Column(String, nullable=True, index=True)
     kcal = Column(Integer, index=True)
+    todos =relationship("Todo_Ricette", back_populates="relazione_ricette")
+
+
+class Todo_Ricette(Base):
+    __tablename__ = "ricette_todos"
+
+    ricetta = Column(String, ForeignKey("ricette.nome_ricetta"))
+    fase = Column(Integer, primary_key=True, index=True)
+    mise_en_place = Column(String, index=True)
+    procedimento = Column(String, index=True)
+    completato = Column(Boolean, default=False)
+    relazione_ricette = relationship("Ricette", back_populates="todos")
+
+
+
+
+
+
+
 
 
 

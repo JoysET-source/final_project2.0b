@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.database import get_db
-from src.schemas import RicettaCreate, Ricetta as RicetteSchema
+from src.schemas.user_schemas import RicettaCreate, Ricetta as RicetteSchema
 from src.models import Ricette
 
 router = APIRouter(prefix="/Ricetta", tags=["RICETTE"])
