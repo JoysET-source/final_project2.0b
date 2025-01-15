@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 
 from src.database import get_db
 from src.schemas.user_schemas import RicettaCreate, Ricetta as RicetteSchema
@@ -22,6 +23,13 @@ def scrivi_ricetta(ricetta: RicettaCreate, db: Session = Depends(get_db)):
     db.refresh(db_ricetta)
     return db_ricetta
 
+@router.get("/tutte ricette", response_model=List[RicetteSchema])
+def elenco_ricette(db: Session = Depends(get_db)):
+    db_ricetta = db.query(Ricette).all()
+    if not db_ricetta :
+        raise HTTPException(status_code=404, detail="Non ci sono ricette nel tuo organizer")
+    return db_ricetta
+
 
 @router.get("/cerca ricetta", response_model=RicetteSchema)
 def trova_ricetta(nome_ricetta: str, db: Session = Depends(get_db)):
@@ -31,7 +39,7 @@ def trova_ricetta(nome_ricetta: str, db: Session = Depends(get_db)):
     return db_ricetta
 
 
-@router.get("/{nome_ricetta}", response_model=RicetteSchema)
+@router.get("/{nome_ricetta}", response_model=List[RicetteSchema])
 def apporto_calorie(kcal: int, db: Session = Depends(get_db)):
     db_ricetta = db.query(Ricette).filter(Ricette.kcal == kcal).all()
     if not db_ricetta :
@@ -56,7 +64,7 @@ def modifica_ricetta(nome_ricetta: str, ricetta: RicettaCreate, db: Session = De
 def cancella_ricetta(nome_ricetta: str, db: Session = Depends(get_db)):
     db_ricetta = db.query(Ricette).filter(Ricette.nome_ricetta == nome_ricetta).first()
     if db_ricetta is None:
-        raise HTTPException(status_code=404, detail="Ricetta non esiste")
+        raise HTTPException(status_code=404, detail="Ricetta non trovata")
 
     db.delete(db_ricetta)
     db.commit()

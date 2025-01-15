@@ -10,7 +10,6 @@ class TodoCreate(TodoBase):
     fase: int
 
 class Todo(TodoBase):
-    fase: int
     ricetta: str
 
     class Config:

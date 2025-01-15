@@ -11,4 +11,9 @@ class RicettaCreate(RicettaBase):
 class Ricetta(RicettaBase):
     nome_ricetta: str
 
+    class Config:
+        orm_mode = True
+
+        
+
 

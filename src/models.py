@@ -15,8 +15,8 @@ class Todo_Ricette(Base):
     __tablename__ = "ricette_todos"
 
     ricetta = Column(String, ForeignKey("ricette.nome_ricetta"))
-    fase = Column(Integer, primary_key=True, index=True)
-    mise_en_place = Column(String, index=True)
+    mise_en_place = Column(String, primary_key=True, index=True)
+    fase = Column(Integer, index=True)
     procedimento = Column(String, index=True)
     completato = Column(Boolean, default=False)
     relazione_ricette = relationship("Ricette", back_populates="todos")
