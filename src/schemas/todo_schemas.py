@@ -6,7 +6,6 @@ class TodoBase(BaseModel):
     completato: bool = False
 
 class TodoCreate(TodoBase):
-    ricetta: str
     fase: int
 
 class Todo(TodoBase):

@@ -14,8 +14,9 @@ class Ricette(Base):
 class Todo_Ricette(Base):
     __tablename__ = "ricette_todos"
 
+    id = Column(Integer, primary_key=True, index=True)
     ricetta = Column(String, ForeignKey("ricette.nome_ricetta"))
-    mise_en_place = Column(String, primary_key=True, index=True)
+    mise_en_place = Column(String, index=True)
     fase = Column(Integer, index=True)
     procedimento = Column(String, index=True)
     completato = Column(Boolean, default=False)
