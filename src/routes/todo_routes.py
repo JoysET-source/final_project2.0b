@@ -56,9 +56,9 @@ def show_fase(ricetta: str, fase: int, db: Session = Depends(get_db)):
 def modifica_todo(ricetta: str, fase: int, todo: TodoCreate, db: Session = Depends(get_db)):
     db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta, Todo_Ricette.fase == fase).first()
     if db_todo is None:
-        raise HTTPException(status_code=404, detail="Ricetta non trovata")
+        raise HTTPException(status_code=404, detail="Ricetta e/o fase non trovata")
 
-    for key, value in fase.dict().items():
+    for key, value in todo.dict().items():
         setattr(db_todo, key, value)
 
     db.commit()
@@ -68,20 +68,21 @@ def modifica_todo(ricetta: str, fase: int, todo: TodoCreate, db: Session = Depen
 
 @router.delete("/{ricetta}")
 def delete_todo(ricetta: str, db: Session = Depends(get_db)):
-    db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta).first()
+    db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta).all()
     if not db_todo:
-        raise HTTPException(status_code=404, detail="Ricetta non esiste")
+        raise HTTPException(status_code=404, detail="Ricetta e/o Fasi per non trovate")
 
-    db.delete(db_todo)
+    for todo in db_todo:
+        db.delete(todo)
     db.commit()
-    return {"message": "Ricetta cancellata"}
+    return {"message": "Todos cancellati per questa ricetta!"}
 
 
 @router.delete("/cancella fase/ricetta/fase")
 def delete_fase(ricetta: str, fase: int, db: Session = Depends(get_db)):
     db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta, Todo_Ricette.fase == fase).first()
     if not db_todo:
-        raise HTTPException(status_code=404, detail="Fase non trovata!")
+        raise HTTPException(status_code=404, detail="Ricetta e/o Fase per non trovata!")
 
     db.delete(db_todo)
     db.commit()
