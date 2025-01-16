@@ -3,18 +3,21 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from src.database import get_db
-from src.models import Todo_Ricette
+from src.models import Todo_Ricette, Ricette
 from src.schemas.todo_schemas import TodoCreate, Todo as TodoSchema
-
+from src.schemas.user_schemas import Ricetta
 
 router = APIRouter(prefix="/todo", tags=["TODOS"])
 
 
 @router.post("/", response_model=TodoSchema)
 def crea_todo(ricetta: str, todo: TodoCreate, db: Session = Depends(get_db)):
+    db_ricetta = db.query(Ricette).filter(Ricette.nome_ricetta == ricetta).first()
+    if not db_ricetta:
+        raise HTTPException(status_code=400, detail="Ricetta non trovata nel database")
     db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta, Todo_Ricette.fase == todo.fase).first()
     if db_todo:
-        raise HTTPException(status_code=400, detail="todo esistente per questa ricetta e fase")
+        raise HTTPException(status_code=400, detail="Fase gia creata!")
 
     db_todo = Todo_Ricette(
         ricetta=ricetta,
@@ -40,6 +43,9 @@ def show_todos(ricetta: str, db: Session = Depends(get_db)):
 
 @router.get("/singola fase ricetta", response_model=TodoSchema)
 def show_fase(ricetta: str, fase: int, db: Session = Depends(get_db)):
+    db_ricetta = db.query(Ricette).filter(Ricette.nome_ricetta == ricetta).first()
+    if not db_ricetta:
+        raise HTTPException(status_code=400, detail="Ricetta non trovata nel database")
     db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta, Todo_Ricette.fase == fase).first()
     if not db_todo:
         raise HTTPException(status_code=404, detail="Fase non trovata")
@@ -47,12 +53,12 @@ def show_fase(ricetta: str, fase: int, db: Session = Depends(get_db)):
 
 
 @router.put("/ricetta", response_model=TodoSchema)
-def modifica_todo(ricetta: str, db: Session = Depends(get_db)):
-    db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta).first()
+def modifica_todo(ricetta: str, fase: int, todo: TodoCreate, db: Session = Depends(get_db)):
+    db_todo = db.query(Todo_Ricette).filter(Todo_Ricette.ricetta == ricetta, Todo_Ricette.fase == fase).first()
     if db_todo is None:
         raise HTTPException(status_code=404, detail="Ricetta non trovata")
 
-    for key, value in ricetta.dict().items():
+    for key, value in fase.dict().items():
         setattr(db_todo, key, value)
 
     db.commit()
