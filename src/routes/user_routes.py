@@ -61,7 +61,7 @@ def modifica_ricetta(nome_ricetta: str, ricetta: RicettaCreate, db: Session = De
     return db_ricetta
 
 @router.delete("/{nome_ricetta}")
-def cancella_ricetta(nome_ricetta: str, db: Session = Depends(get_db)):
+def elimina_ricetta(nome_ricetta: str, db: Session = Depends(get_db)):
     db_ricetta = db.query(Ricette).filter(Ricette.nome_ricetta == nome_ricetta).first()
     if db_ricetta is None:
         raise HTTPException(status_code=404, detail="Ricetta non trovata")
